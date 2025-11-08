@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+     <script src="https://kit.fontawesome.com/fffd359068.js" crossorigin="anonymous"></script>
+    <style>
+        body{
+            box-sizing: border-box;
+            background-color: #E6F0FF;
+        }
+        #input-btn{
+            width: 120px;
+            height: 40px;
+            border-radius: 10px;
+            color: white;
+            background-color: #FF4422;
+            border: #FF4422;
+            margin-left: 90px;
+            margin-top: 10px;
+        }
+        #box{
+            margin-left:39px;
+            margin-top:50px;
+            margin-right: 20px;
+        }
+        h3{
+            color:#1A237E;
+        }
+        h4{
+            color:#555555
+        }
+        #box{
+            width: 300px;
+            padding: 50px;
+            background: #fff; 
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            height: 300px;
+        }
+        textarea{
+            resize: none;
+        }
+         td, th {
+      border: 1px solid #1A237E;;
+      text-align: left;
+      padding: 15px;
+    }
+    table{
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    #container{
+        display: flex;
+        margin-left: 30px;
+        margin-top: 0px;
+    }
+    #table{
+        margin-top: 50px;
+    }
+    </style>
+</head>
+<body>
+    <div id="container">
+    <div id="box">
+    <i class="fa-solid fa-arrow-left" id="back"></i>
+    <span>back</span>
+    <h3>Have a qestion?</h3>
+    <form onsubmit="save(event)">
+        <textarea id="help" name="question" rows="5" cols="40" required></textarea>
+        <button id="input-btn" class="input" type="submit">SUBMIT</button>
+    </form>
+    <h4> Ater submit you will receive a ticket</h4>
+    <h3>You can also mail us help@jobapplicationtracker.com</h3>
+    </div>
+    <div id="table">
+        <h3>Complaint History</h3>
+        <table>
+            <tr>
+                <th>Ticket id</th>
+                <th>Complaint details</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Resolution</th>
+            </tr>
+            <tbody id="tbody"></tbody>
+        </table>
+    </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.6.8/dist/axios.min.js"></script>
+    <script>
+        window.onload = fetchanddisplay;
+        let token = localStorage.getItem("token");
+        document.getElementById("back").addEventListener("click",()=>{
+            window.location.href = "http://127.0.0.1:5500/jobdeed.user.home.html"
+        })
+        function save(event){
+            event.preventDefault();
+      let complaintdata = document.getElementById('help').value;
+      let obj = {
+      complaint:complaintdata
+    }
+      axios.post("http://localhost:8080/help",obj,{
+         headers: { Authorization: `Bearer ${token}`}
+      })
+      .then(()=>{
+        alert("complaint added sucessfully")
+        document.getElementById("help").value = "";
+        fetchanddisplay()
+      }).catch((err)=>{
+        if(err.response && err.response.status == 401){
+            document.body.innerHTML = "<h1>Unauthorised usage</h1>";
+        }
+      })
+    }
+
+
+        function fetchanddisplay()
+        {
+            axios.get("http://localhost:8080/help",{
+                 headers: { Authorization: `Bearer ${token}`}
+            })
+            .then((res)=>{
+            let response = res.data
+             let tbody = document.getElementById("tbody");
+            tbody.innerHTML ="";
+            response.forEach((message)=>{
+                const tr = document.createElement("tr");
+            tr.innerHTML = `
+            <td>202508${message.id}</td>
+            <td>${message.Complaintdetails}</td>
+            <td>${message.createdAt.slice(0,10)}</td>
+            <td>${message.Status}</td>
+            <td>${message.Resolution}</td>
+            
+            `
+            tbody.appendChild(tr)
+            })
+            }).catch((err)=>{
+                if(err.response && err.response.status == 401){
+            document.body.innerHTML = "<h1>Unauthorised usage</h1>";
+        }
+            })
+        }
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Start Date – Job Deed</title>
+<style>
+  :root{
+    --bg:#f7faf8;
+    --card:#ffffff;
+    --text:#072b26;
+    --muted:#1d4f46;
+    --stroke:#d9e5e1;
+    --accent:#0f6a5a;      /* teal */
+    --accent-2:#e6f3f0;    /* selected bg */
+    --shadow:0 8px 22px rgba(0,0,0,.06);
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* page layout */
+  .wrap{
+    max-width:780px;
+    margin: 56px auto 96px;
+    padding: 0 24px;
+  }
+
+  /* heading */
+  h1{
+    font-size:36px;
+    line-height:1.2;
+    font-weight:800;
+    margin: 0 0 24px 0;
+  }
+
+  /* options list */
+  form{
+    max-width:560px;
+  }
+  .option{
+    position:relative;
+    display:flex;
+    align-items:center;
+    gap:14px;
+    background:var(--card);
+    border:1px solid var(--stroke);
+    border-radius:var(--radius);
+    padding:18px 22px 18px 64px; /* left room for radio */
+    margin: 0 0 16px 0;
+    box-shadow:var(--shadow);
+    cursor:pointer;
+    transition:transform .06s ease, border-color .2s ease, background .2s ease;
+    user-select:none;
+  }
+  .option:hover{ transform: translateY(-1px); }
+
+  /* hide native radio but keep it accessible */
+  .option > input{
+    position:absolute;
+    left:18px;
+    top:50%;
+    transform:translateY(-50%);
+    appearance:none;
+    -webkit-appearance:none;
+    width:0; height:0; opacity:0;
+  }
+
+  /* custom radio circle (before) + fill (after) */
+  .option::before{
+    content:"";
+    position:absolute;
+    left:18px; top:50%; transform:translateY(-50%);
+    width:24px; height:24px; border-radius:50%;
+    border:2px solid #8aa7a0;
+    background:#fff;
+    transition:border-color .2s ease, box-shadow .2s ease, background .2s ease;
+  }
+  .option::after{
+    content:"";
+    position:absolute;
+    left:18px; top:50%; transform:translate(7px,-50%);
+    width:12px; height:12px; border-radius:50%;
+    background:transparent;
+    transition:background .2s ease;
+  }
+
+  /* label text */
+  .label-text{
+    font-size:18px;
+    font-weight:700;
+    color:#0b3b33;
+  }
+
+  /* selected state using :has */
+  .option:has(input:checked){
+    background:var(--accent-2);
+    border-color:#b7d8d1;
+  }
+  .option:has(input:checked)::before{
+    border-color:var(--accent);
+    box-shadow:0 0 0 4px rgba(15,106,90,.12);
+  }
+  .option:has(input:checked)::after{
+    background:var(--accent);
+  }
+
+  /* Continue button */
+  .actions{ margin-top:26px; }
+  .btn{
+    display:block;
+    width:260px;
+    max-width:100%;
+    margin:0 auto;
+    padding:14px 26px;
+    border:0; border-radius:12px;
+    background:var(--accent);
+    color:#fff; font-weight:800; letter-spacing:.2px;
+    cursor:pointer;
+    box-shadow:var(--shadow);
+    transition:transform .06s ease, filter .2s ease;
+  }
+  .btn:hover{ filter:brightness(1.05); transform:translateY(-1px); }
+
+  @media (max-width:520px){
+    h1{ font-size:26px; }
+    .option{ padding-left:58px; }
+    .option::before{ left:14px; }
+    .option::after{ left:14px; transform:translate(7px,-50%); }
+  }
+</style>
+</head>
+<body>
+  <main class="wrap">
+    <h1>When would you like to start your<br/>new job?</h1>
+
+    <form onsubmit="submitdata(event)">
+      <label class="option">
+        <input type="radio" name="start" value="whenever">
+        <span class="label-text">Whenever I find the right fit</span>
+      </label>
+
+      <label class="option">
+        <input type="radio" name="start" value="couple-months">
+        <span class="label-text">In the next couple months</span>
+      </label>
+
+      <label class="option">
+        <input type="radio" name="start" value="asap">
+        <span class="label-text">As soon as possible</span>
+      </label>
+
+      <div class="actions">
+        <button class="btn" type="submit">Continue</button>
+      </div>
+    </form>
+  </main>
+   <script src="https://cdn.jsdelivr.net/npm/axios@1.6.8/dist/axios.min.js"></script>
+  <script>
+    function submitdata(event){
+      event.preventDefault()
+      let selected = document.querySelector('input[name="start"]:checked');
+      if(!selected){
+        alert("Please click the option to continue")
+      }
+      else{
+         let obj = {onboardvalue:selected.value }
+
+            axios.post("http://localhost:8080/onboard-time",obj,{
+              headers: { Authorization: "Bearer " + localStorage.getItem("token") }
+            }).then((res)=>{
+              if(res.data.data == "success"){
+                window.location.href = "http://127.0.0.1:5500/education-details.html";
+              }
+              else if(res.data.data == "fail"){
+                alert("something went wrong")
+              }
+              else{
+                alert("something went wrong")
+              }
+            }).catch((err)=>{
+              alert("error is",err.message)
+            })
+      }
+
+    }
+  </script>
+</body>
+</html>

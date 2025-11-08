@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sign In</title>
+  <style>
+    body {
+      box-sizing: border-box;
+      background-color: #E6F0FF;
+    }
+
+    .signin-input {
+      height: 35px;
+      width: 250px;
+      margin-top: 10px;
+    }
+
+    .signin-input::placeholder {
+      text-align: center;
+    }
+
+    #signin-btn {
+      margin-top: 10px;
+      margin-left: 70px;
+      width: 120px;
+      height: 35px;
+      border-radius: 10px;
+      color: white;
+      background-color: #FF4422;
+      border: #FF4422;
+    }
+
+    #welcomeuser {
+      color: white;
+    }
+
+    #signup-anchor {
+      text-decoration: none;
+      border: 1px solid white;
+      padding: 10px;
+      display: inline-block;
+      width: 120px;
+      text-align: center;
+      border-radius: 10px;
+      color: white;
+    }
+
+    .container {
+      display: flex;
+      margin-top: 40px;
+    }
+
+    #signup-show {
+      border: 1px solid #FF4422;
+      padding: 50px;
+      background: linear-gradient(to right, #FF4B2B, #FF416C);
+    }
+
+    #signupform {
+      padding: 70px;
+      background: #fff;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .pcontentsignup {
+      color: white;
+      font-size: large;
+    }
+
+    #heading {
+      padding: 60px;
+      color: #1A237E;
+    }
+
+    #demo {
+      text-decoration: none;
+    }
+    #quote {
+      color: #E74C3C;
+    }
+
+    h4 {
+      color: #2C3E50;
+      background-color: #FDF6E3;
+      margin-top: 30px;
+    }
+    #forget{
+        color: #3c4043;
+        text-decoration: none;
+        margin-left: 60px;
+        font-size: 20px;
+    }
+    #demo1{
+      color: red;
+    }
+  </style>
+</head>
+<body>
+    <div>
+        <marquee>Exciting News! 🎉 We have successfully raised $20 Million in funding from our investors to accelerate growth and innovation</marquee>
+    </div>
+
+  <div class="container">
+    
+    <div id="heading">
+      <br><br><br><br>
+      <h2>FIND YOUR DREAM JOB NOW</h2>
+      <h4>Only a few seconds are left to land a dream job
+      </h4>
+    </div>
+
+    <div id="signup-show">
+      <h1 id="welcomeuser">HELLO FRIEND!</h1>
+      <p class="pcontentsignup">Enter your details and start your</p>
+      <p class="pcontentsignup">journey with us today</p>
+      <a href="http://127.0.0.1:5500/jobdeed.signup.html" id="signup-anchor">SIGN UP</a>
+    </div>
+
+    <div id="signupform">
+      <h1>SIGN IN</h1>
+      <form onsubmit="save(event)">
+        <input type="email" id="signin-email" class="signin-input" placeholder="Email" autocomplete="off" required><br>
+        <input type="password" id="signin-password" class="signin-input" placeholder="Password" required><br>
+        <p id="password-fail"></p>
+        <a href="http://127.0.0.1:5500/forgetpassword.html?" style="font-size: small;" id="forget">Forgot your password?</a><br><br>
+        <p id="demo1"></p>
+        <button id="signin-btn" type="submit">SIGN IN</button>
+      </form>
+    </div>
+  </div>
+
+  <small><a>Privacy & Policy |</a></small>
+  <small><a style="margin-left: 10px;">T&C |</a></small>
+  <small style="margin-left: 10px;">
+    <a id="demo" href="mailto:218x1a0482@khitguntur.ac.in">help@jobdeed.com</a>
+  </small>
+  <script src="https://cdn.jsdelivr.net/npm/axios@1.6.8/dist/axios.min.js"></script>
+  <script>
+    function save(event){
+      event.preventDefault()
+      let email = document.getElementById("signin-email").value.toLowerCase();
+      let password = document.getElementById("signin-password").value;
+    
+    let obj = {
+      email:email,
+      password:password
+    }
+
+    axios.post('http://localhost:8080/login',obj)
+    .then((response)=>{
+      console.log(response)
+      if(response.data.data == "notexist"){
+        alert("User not exist, check email again")
+      }
+      else if(response.data.data == "wrongpassword"){
+        alert("Password entered Wrongly ! check again")
+      }
+      else if(response.data.data == "success" && response.data.Onboarded==true){
+        alert("login successful")
+        localStorage.setItem("token",response.data.token)
+        localStorage.setItem("name",response.data.Name)
+        localStorage.setItem("Email",email)
+        window.location.href = "http://127.0.0.1:5500/jobdeed.user.home.html";
+      }
+      else if(response.data.data == "success" && response.data.Onboarded==false){
+         localStorage.setItem("token",response.data.token)
+         localStorage.setItem("name",response.data.Name)
+         localStorage.setItem("Email",email)
+         window.location.href = "http://127.0.0.1:5500/onboard.html"
+      }
+      else{
+        alert("Internal server error")
+      }
+    })
+  }
+  </script>
+</body>
+</html>

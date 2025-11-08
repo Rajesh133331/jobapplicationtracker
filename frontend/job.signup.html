@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body{
+            box-sizing: border-box;
+            background-color: #E6F0FF;
+        }
+        .signup-input{
+            height:35px;
+            width:250px;
+            margin-top: 10px;
+        }
+        .signup-input::placeholder{
+            text-align: center;
+        }
+        #signup-btn{
+            margin-top: 10px;
+            margin-left: 60px;
+            width: 120px;
+            height: 35px;
+            border-radius: 10px;
+            color: white;
+            background-color: #FF4422;
+            border: #FF4422;
+        }
+        #welcomeuser{
+            color: white;
+        }
+        #sign-in-anchor{
+            text-decoration: none;
+            border:1px solid white;
+            padding: 10px;
+            display: inline-block;
+            width: 120px;
+            text-align: center;
+            border-radius: 10px;   
+            color: white;
+        }
+        .container{
+            display: flex;
+            margin-left:px;
+            margin-right: 30px;
+            margin-top: 30px;
+        }
+        #signup-show{
+            border:1px solid #FF4422;
+            padding:30px;
+            background:linear-gradient(135deg, #e44d26, #f16529);
+        }
+        #signupform{
+            padding: 35px;
+            background: #fff; 
+            box-shadow: 0 0 20px rgba(0,0,0,0.1)
+        }
+        .pcontentsignup{
+            color: white;
+            font-size: large;
+        }
+        #heading{
+            padding: 60px;
+            color: #1A237E;
+        }
+        #demo{
+            text-decoration: none;
+        }
+        #quote{
+            color: #E74C3C;
+            
+        }
+        h4{
+            color: #2C3E50;
+            background-color: #FDF6E3;
+            margin-top: 30px;
+        }
+        #passwordwrong{
+            color:red;
+        }
+        #jobicon {
+  display: inline-block;
+  font-family: system-ui, Arial, sans-serif;
+  white-space: nowrap;
+  overflow: hidden;
+  border-right: .12em solid currentColor;
+  width: 0;
+  animation: typing 2.8s steps(23, end) forwards;
+}
+
+@keyframes typing {
+  from { width: 0 }
+  to   { width: 26ch }
+}
+#signup-show,
+#signupform {
+  opacity: 0;
+  transform: translateY(24px) scale(.98);
+  animation: signupEnter .6s ease-out both;
+  will-change: transform, opacity;
+}
+
+#signup-show { animation-delay: 3s; }
+#signupform  { animation-delay: 3.2s; }
+
+#signup-show {
+  animation-name: signupEnter, gradientDrift;
+  animation-duration: .6s, 10s;
+  animation-timing-function: ease-out, linear;
+  animation-delay: 3s, 3.6s;
+  animation-iteration-count: 1, infinite;
+  animation-fill-mode: both, forwards;
+  background-size: 200% 200%;
+}
+
+#heading h4 {
+  opacity: 0;
+  transform: translateY(8px);
+  animation: fadeUp .5s ease-out 2.6s forwards;
+}
+
+@keyframes signupEnter {
+  0%   { opacity: 0; transform: translateY(24px) scale(.98); filter: blur(2px); }
+  60%  { opacity: 1; transform: translateY(-2px) scale(1.005); filter: blur(0); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes gradientDrift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes fadeUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
+    </style>
+</head>
+<body>
+    <div class="marquee-container">
+        <marquee>Exciting News! 🎉 We have successfully raised $20 Million in funding from our investors to accelerate growth and innovation</marquee>
+</div>
+
+    <div class="container">
+        <div id="heading">
+            <br><br><br><br><br><br>
+                <h2 id="jobicon">FIND YOUR DREAM JOB NOW</h2>
+                <h4>Only a few seconds are left to land a dream job</h4>
+        </div>
+    <div id="signup-show">
+        <h1 id="welcomeuser">WELCOME BACK!</h1>
+        <p class="pcontentsignup">To keep connected with us please login</p>
+        <p class="pcontentsignup">with your personal info</p><br><br>
+        <a href="http://127.0.0.1:5500/jobdeed.login.html" id="sign-in-anchor">SIGN IN</a>
+    </div>
+    <div id="signupform">
+        <h1>Create Account</h1>
+        <form onsubmit="save(event)">
+            <input type="text" id="signup-name" class="signup-input" placeholder="Enter Name" autocomplete="off" required><br>
+            <input type="text" id="signup-mobile" class="signup-input" placeholder="Mobile Number" autocomplete="off" required><br>
+            <input type="email" id="signup-email" class="signup-input" placeholder="Email" autocomplete="off" required><br>
+            <input type="password" id="signup-password" class="signup-input" placeholder="Password" required><br>
+            <input type="password" id="signup-repassword" class="signup-input" placeholder="Re Enter Password" required>
+            <p id="passwordwrong"></p>
+            <button id="signup-btn">SIGN UP</button>
+        </form>
+
+    </div>
+    </div>
+   <small><a>Privacy & Policy  |</a></small>
+   <small> <a style="margin-left: 10px;">T&C   |</a></small>
+   <small style="margin-left: 10px;"><a id="demo" href="mailto:218x1a0482@khitguntur.ac.in">help@jobdeed.com</a></small>
+   <script src="https://cdn.jsdelivr.net/npm/axios@1.6.8/dist/axios.min.js"></script>
+<script>
+    function save(event){
+        event.preventDefault()
+    let pass1 = document.getElementById("signup-password").value;
+    let pass2 = document.getElementById("signup-repassword").value;
+    let name = document.getElementById("signup-name").value;
+    let mobile = document.getElementById("signup-mobile").value;
+    let email = document.getElementById("signup-email").value;
+
+    //saving  data into object
+    let obj = {
+        name:name,
+        mobilenumber:mobile,
+        email:email,
+        password:pass1
+    }
+
+
+    document.getElementById("signup-password").addEventListener("focus", () => {
+    document.getElementById("passwordwrong").innerHTML = "" });
+
+    document.getElementById("signup-repassword").addEventListener("focus", () => {
+    document.getElementById("passwordwrong").innerHTML = "" });
+
+    //password same checking code here in signup
+    if(pass1!==pass2){
+        document.getElementById("passwordwrong").innerHTML = "* Both password should be same";
+        return;
+    }
+    else{
+        axios.post("http://localhost:8080/signup",obj)
+        .then((result)=>{
+            console.log(result)
+            if(result.data.data == "exist"){
+                alert("User already exist please login")
+                window.location.href="http://127.0.0.1:5500/jobdeed.login.html"
+            }
+            else if(result.data.data == "success"){
+                alert("successfull signup,Please login into account")
+                window.location.href="http://127.0.0.1:5500/jobdeed.login.html"
+            }
+            else{
+                 alert("Internal server error,please try after some time")
+            }
+        })
+    }
+
+}
+</script>
+
+</body>
+</html>

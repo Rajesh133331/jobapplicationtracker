@@ -1,0 +1,275 @@
+<!-- savedjobs.html (table kept exactly like support.html; no overflow) -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Saved Jobs - Job Deed</title>
+  <script src="https://kit.fontawesome.com/fffd359068.js" crossorigin="anonymous"></script>
+  <style>
+    /* Base */
+    body{
+      box-sizing: border-box;
+      background-color: #E6F0FF;
+      margin: 0;
+      font-family: system-ui, Arial, sans-serif;
+    }
+
+    /* Layout: same two-pane layout, now wraps to avoid overflow */
+    #container{
+      display: flex;
+      flex-wrap: wrap;         /* prevents overflow on small screens */
+      gap: 20px;
+      padding: 24px 16px;
+    }
+
+    /* Left card (keep your sizing) */
+    #box{
+      width: 300px;
+      padding: 50px;
+      background: #fff; 
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      border: 1px solid #d9e5e1;
+      border-radius: 14px;
+      margin: 0;               /* remove big margins that could push layout */
+    }
+
+    h3{ color:#1A237E; margin: 10px 0; }
+    h4{ color:#555555; margin: 6px 0; }
+
+    /* Back row (same behavior; just spacing) */
+    .back-row{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      margin-bottom:8px;
+      color:#0f6a5a;
+      cursor:pointer;
+      user-select:none;
+    }
+    #back{ font-size:18px; }
+
+    /* Form */
+    form{ display:grid; gap:10px; }
+    label{ font-size:13px; color:#37474f; }
+    input, textarea{
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid #d9e5e1;
+      border-radius: 8px;
+      font-size: 14px;
+      outline: none;
+      background:#fff;
+    }
+    textarea{
+      resize: none;
+      min-height: 80px;
+    }
+    input:focus, textarea:focus{ border-color:#0f6a5a; }
+
+    /* Submit button (your original support style) */
+    #input-btn{
+      width: 120px;
+      height: 40px;
+      border-radius: 10px;
+      color: white;
+      background-color: #FF4422;
+      border: #FF4422;
+      margin-left: 90px;
+      margin-top: 10px;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(255,68,34,.25);
+    }
+
+    /* Right table area: flexible, no overflow */
+    #table{
+      flex: 1;
+      min-width: 320px;        /* keeps table from squishing too small */
+      background:#fff;
+      border: 1px solid #d9e5e1;
+      border-radius: 14px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.08);
+      padding: 16px;
+    }
+
+    /* === TABLE: EXACTLY LIKE SUPPORT.HTML === */
+    table{
+      border-collapse: collapse;
+      width: 100%;
+      table-layout: fixed;      /* ensures cells wrap instead of overflow */
+      background:#fff;
+    }
+    td, th {
+      border: 1px solid #1A237E;
+      text-align: left;
+      padding: 15px;
+      vertical-align: top;
+      word-wrap: break-word;
+      overflow-wrap: anywhere;  /* wrap long words/URLs */
+    }
+    /* (Support.html doesn’t set thead bg; leaving as-is) */
+
+    /* Links inside URL column wrap cleanly */
+    a{ color:#1A237E; text-decoration: underline; word-break: break-all; }
+
+    /* Small screens: stack columns cleanly */
+    @media (max-width: 860px){
+      #box{ width: 100%; }
+      #input-btn{ margin-left: 0; width: 100%; }
+      #table{ width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <!-- LEFT: form card -->
+    <div id="box">
+      <div class="back-row">
+        <i class="fa-solid fa-arrow-left" id="back"></i>
+        <span>back</span>
+      </div>
+
+      <h3>Save a Job</h3>
+      <form onsubmit="addSavedJob(event)">
+        <div>
+          <label for="job-title">Job Title</label>
+          <input type="text" id="job-title" placeholder="" required>
+        </div>
+        <div>
+          <label for="job-company">Company</label>
+          <input type="text" id="job-company" placeholder="">
+        </div>
+        <div>
+          <label for="job-url">Job URL</label>
+          <input type="url" id="job-url" placeholder="">
+        </div>
+        <div>
+          <label for="job-notes">Notes</label>
+          <textarea id="job-notes" placeholder=""></textarea>
+        </div>
+        <button id="input-btn" type="submit">SAVE</button>
+      </form>
+
+      <h4>Your saved jobs appear on the right</h4>
+    </div>
+
+    <!-- RIGHT: table (as in support.html) -->
+    <div id="table">
+      <h3>Saved Jobs List</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Company</th>
+            <th>URL</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="job-table"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- JS (unchanged) -->
+  <script src="https://cdn.jsdelivr.net/npm/axios@1.6.8/dist/axios.min.js"></script>
+  <script>
+    const token = localStorage.getItem("token");
+    window.onload = fetchSavedJobs;
+
+    // Back same as support.html
+    document.getElementById("back").addEventListener("click",()=>{
+      window.location.href = "http://127.0.0.1:5500/jobdeed.user.home.html";
+    });
+
+    function addSavedJob(event){
+      event.preventDefault();
+      const obj = {
+        JobTitle: document.getElementById("job-title").value,
+        CompanyName: document.getElementById("job-company").value,
+        JobUrl: document.getElementById("job-url").value,
+        Notes: document.getElementById("job-notes").value
+      };
+      axios.post("http://localhost:8080/savedjobs", obj, {
+        headers: { Authorization: `Bearer ${token}` }
+      }).then((res) => {
+        if(res.data.data === "success"){
+          alert("Job saved");
+          fetchSavedJobs();
+          document.getElementById("job-title").value = "";
+          document.getElementById("job-company").value = "";
+          document.getElementById("job-url").value = "";
+          document.getElementById("job-notes").value = "";
+        }
+      }).catch((err) => {
+        console.log(err);
+      });
+    }
+
+    function fetchSavedJobs(){
+      axios.get("http://localhost:8080/savedjobs", {
+        headers: { Authorization: `Bearer ${token}` }
+      }).then((res) => {
+        const tbody = document.getElementById("job-table");
+        tbody.innerHTML = "";
+        res.data.forEach(job => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${job.JobTitle}</td>
+            <td>${job.CompanyName || ''}</td>
+            <td>${job.JobUrl ? `<a href="${job.JobUrl}" target="_blank">${job.JobUrl}</a>` : ''}</td>
+            <td>
+              <button style="background:#0f6a5a;color:#fff;border:none;border-radius:6px;padding:6px 10px;cursor:pointer;margin-right:6px;" onclick="editJob(${job.id})">Edit</button>
+              <button style="background:#ff4422;color:#fff;border:none;border-radius:6px;padding:6px 10px;cursor:pointer;" onclick="deleteJob(${job.id})">Delete</button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }).catch((err) => {
+        console.log(err);
+      });
+    }
+
+    function editJob(id){
+      axios.get(`http://localhost:8080/savedjobs/${id}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+        .then((res)=>{
+            console.log(res)
+        const response = res.data;
+        deleteJobtoedit(id)
+          document.getElementById("job-title").value =response.data.JobTitle ;
+          document.getElementById("job-company").value = response.data.CompanyName;
+          document.getElementById("job-url").value = response.data.JobUrl;
+          document.getElementById("job-notes").value = response.data.Notes;
+
+        }).catch((err)=>{
+            console.log(err.messqage)
+            alert("something went wrong")
+        })
+    }
+
+    function deleteJob(id){
+      if(confirm("Sure?")){
+        axios.delete(`http://localhost:8080/savedjobs/${id}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        }).then(() => {
+          alert("Deleted");
+          fetchSavedJobs();
+        }).catch((err) => {
+          console.log(err);
+        });
+      }
+    }
+
+    function deleteJobtoedit(id){
+        axios.delete(`http://localhost:8080/savedjobs/${id}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        }).then(() => {
+          fetchSavedJobs();
+        }).catch((err) => {
+          console.log(err);
+        });
+    }
+  </script>
+</body>
+</html>

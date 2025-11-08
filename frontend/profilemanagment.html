@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #myaccount{
+            text-decoration: none;
+            width:125px ;
+            height: 15px;
+            border:1px solid #0b3b33;
+            padding: 10px;
+            color: #0b3b33;
+            background-color: #F0F9F9;
+        }
+        #member-heading,#change-pass,#delete-icon{
+            color: #0b3b33;
+        }
+        .input{
+            width: 250px;
+            height: 25px;
+        }
+        #save-btn,#savepassword-btn{
+            width: 100px;
+            height: 45px;
+            color: white;
+            font-size: 15px;
+            opacity: 0.9;
+            border-radius: 5px;
+            background-color: #0b3b33;
+            border: none;
+        }
+        #logout-btn{
+            width: 100px;
+            height: 45px;
+            background: none;
+            border: none;
+            border: 1px solid #0b3b33;
+            border-radius: 5px;
+            color:#0b3b33;
+            margin-left: 10px;
+            font-size: 15px;
+        }
+    #line1{
+          margin-left: 1px;
+          border: none;
+          border-top: 1px solid lightgray;
+         }
+    #line2,#line3{
+        margin-left: 10px;
+        width: 600px;
+    }
+    label,h4{
+        color: #7A7A7A;
+    }
+    #update-password{
+        margin-top: 10px;
+    }
+    #delete-acc{
+        background: none;
+        color: red;
+        width: 200px;
+        height: 45px;
+        border: 1px solid red;
+        font-size: 15px;
+        border-radius: 5px;
+    }
+    
+    </style>
+</head>
+<body>
+    <div>
+        <br>
+    <a href="http://127.0.0.1:5500/jobdeed.user.home.html" id="myaccount">My Account</a><br><br><br>
+    <hr id="line1">
+    <h2 id="member-heading">Member Information</h2>
+    <label id="name">Full Name</label><br>
+    <input type="text" id="fullname" class="input" required><br><br>
+    <label id="name">Email</label><br>
+    <input type="email" id="email" class="input" disabled><br><br>
+    <button type="button" id="save-btn" onclick="saveinfo()">Save</button>
+    <button type="button" id="logout-btn" onclick="logout()">Logout</button><br><br>
+    <hr id="line2">
+    <h3 id="change-pass">Change Password</h3>
+    <label id="newpassword">New password</label><br>
+    <input type="password" id="update-password" class="input"><br><br>
+    <button type="button" id="savepassword-btn" onclick="changepassword()">Save</button><br>
+    <hr id="line3">
+    <h3 id="delete-icon">Delete Account</h3>
+    <h4>To cancel your Jobdeed account and delete all your career data just click the button below.</h4>
+    <button type="button" id="delete-acc" onclick="deleteaccount()">Delete My Account</button>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.6.8/dist/axios.min.js"></script>
+
+    <script>
+        let name = localStorage.getItem("name");
+        document.getElementById("fullname").value = name;
+        let email = localStorage.getItem("Email");
+        document.getElementById("email").value = email;
+
+        function logout(){
+            localStorage.removeItem("token")
+            localStorage.removeItem("name")
+            localStorage.removeItem("Email")
+            alert("Logout successfully")
+            window.location.href = "http://127.0.0.1:5500/jobdeed.login.html";
+        }
+
+        function saveinfo(){
+            let fullname = document.getElementById("fullname").value;
+            let emailid = document.getElementById("fullname").value;
+
+            let obj = {
+                username:fullname
+            }
+            axios.post("http://localhost:8080/userdetailsupdate",obj,{
+                headers: { Authorization: "Bearer " + localStorage.getItem("token")}
+            })
+            .then((res)=>{
+                const response = res.data;
+                if(response.data == "success"){
+                    alert("user details updated successfully")
+                    localStorage.setItem("name",fullname);
+                    localStorage.setItem("Email",Email)
+                }
+                else if(response.data == "fail"){
+                    alert("Something went wrong")
+                }
+            })
+            .catch((err)=>{
+                comsole.log("error is",err.message)
+                if(err){
+                    alert("error due to",err.message)
+                }
+            })
+        }
+
+        //changing password
+        function changepassword(){
+            let pass = document.getElementById("update-password").value;
+            let obj = {
+                password:pass
+            }
+            axios.post("http://localhost:8080/updatepassword",obj,{
+                headers: { Authorization: "Bearer " + localStorage.getItem("token")}
+            }).
+            then((res)=>{
+                const response = res.data;
+                if(response.data == "success"){
+                    alert("Password change successfully")
+                    document.getElementById("update-password").value = "";
+                }
+                else if(response.data == "fail"){
+                    alert("Something went wrong please try again")
+                }
+                else{
+                    alert("server issue please try after sometime")
+                }
+            }).catch((err)=>{
+                alert(err.message)
+            })
+        }
+
+        //deleting account
+        function deleteaccount(){
+            axios.post("http://localhost:8080/deleteaccount",{},{
+                headers: { Authorization: "Bearer " + localStorage.getItem("token")}
+            }).
+            then((res)=>{
+                const response = res.data;
+                if(response.data == "success"){
+                    alert("Account deleted successfully")
+                    window.location.href = "http://127.0.0.1:5500/jobdeed.signup.html";
+                }
+                else if(response.data == "fail"){
+                    alert("something went wrong please try again")
+                }
+            })
+            .catch((err)=>{
+                alert("error is",err.message)
+            })
+        }
+    </script>
+</body>
+</html>

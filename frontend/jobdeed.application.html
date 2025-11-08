@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Application Entry</title>
+<style>
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+    background:#f4f6f8;
+    color:#111;
+    padding:16px
+  }
+  .container{
+    max-width:720px;
+    margin:0 auto;
+    background:#fff;
+    border:1px solid #e5e7eb;
+    border-radius:8px;
+    padding:16px;
+  }
+  h1{
+    font-size:20px;
+    margin:0 0 12px;
+    color: #0b3b33;
+  }
+  form{
+    display:grid;
+    gap:12px
+  }
+  .row{
+    display:grid;
+    gap:12px
+  }
+  @media(min-width:640px){
+    .row.two{grid-template-columns:1fr 1fr}
+    .row.three{grid-template-columns:1fr 1fr 1fr}
+  }
+  label{
+    display:block;
+    font-size:14px;
+    color:#374151;
+    margin-bottom:6px
+  }
+  input[type="text"],
+  input[type="url"],
+  input[type="date"],
+  select,
+  textarea{
+    width:100%;
+    padding:10px 12px;
+    font-size:14px;
+    border:1px solid #d1d5db;
+    border-radius:6px;
+    background:#fff;
+    color:#111
+  }
+  textarea{min-height:100px; resize:vertical}
+  input:focus, select:focus, textarea:focus{
+    outline:none;
+    border-color:#2563eb;
+    box-shadow:0 0 0 3px rgba(37,99,235,.15)
+  }
+  .actions{
+    display:flex;
+    gap:10px;
+    margin-top:4px
+  }
+  button{
+    appearance:none;
+    border:1px solid #111827;
+    background:#0b3b33;
+    color:#fff;
+    padding:10px 14px;
+    border-radius:6px;
+    font-size:14px;
+    cursor:pointer
+  }
+  button[type="reset"]{
+    background:#fff;
+    color:#111827
+  }
+  textarea{
+    resize: none;
+  }
+</style>
+</head>
+<body>
+  <button type="button" id="homepage">Back</button>
+  <div class="container">
+    <h1>Application Entry</h1>
+    <form id="formdata">
+      <div class="row two">
+        <div>
+          <label for="company">Company Name *</label>
+          <input id="company" name="company" type="text" required placeholder="">
+        </div>
+        <div>
+          <label for="title">Job Title *</label>
+          <input id="title" name="title" type="text" required placeholder="">
+        </div>
+      </div>
+
+      <div class="row three">
+        <div>
+          <label for="date">Application Date *</label>
+          <input id="date" name="date" type="date" required>
+        </div>
+        <div>
+          <label for="status">Status *</label>
+          <select id="status" name="status" required>
+            <option value="">Select</option>
+            <option>Applied</option>
+            <option>Screening</option>
+            <option>Interviewing</option>
+            <option>Assignment</option>
+            <option>Offered</option>
+            <option>Rejected</option>
+            <option>Accepted</option>
+            <option>On Hold</option>
+          </select>
+        </div>
+        <div>
+          <label for="location">Location</label>
+          <input id="location" name="location" type="text" placeholder="">
+        </div>
+      </div>
+
+      <div class="row two">
+        <div>
+          <label for="joburl">Job URL</label>
+          <input id="joburl" name="joburl" type="url" placeholder="">
+        </div>
+        <div>
+          <label for="contact">Resume Drive Url</label>
+          <input id="drivelink" name="resumeurl" type="text" placeholder="">
+        </div>
+      </div>
+
+      <div>
+        <label for="notes">Notes</label>
+        <textarea id="notes" name="notes" placeholder=""></textarea>
+      </div>
+
+      <div class="actions">
+        <button type="submit" onclick="submitapplication(event)">Save Application</button>
+        <button type="reset">Clear</button>
+      </div>
+    </form>
+  </div>
+   <script src="https://cdn.jsdelivr.net/npm/axios@1.6.8/dist/axios.min.js"></script>
+  <script>
+
+    document.getElementById("homepage").addEventListener("click",()=>{
+      window.location.href = "http://127.0.0.1:5500/jobdeed.user.home.html"
+    })
+
+    function submitapplication(event){
+      event.preventDefault()
+
+    const company_name = document.getElementById("company").value
+    const job_title = document.getElementById("title").value
+    const date = document.getElementById("date").value
+    const status = document.getElementById("status").value
+    const location = document.getElementById("location").value
+    const joburl = document.getElementById("joburl").value
+    const driveurl = document.getElementById("drivelink").value
+    const notes = document.getElementById("notes").value
+    const form = document.getElementById("formdata")
+
+    let obj = {
+      Companyname:company_name,
+      Jobtitle:job_title,
+      Date:date,
+      Status:status,
+      Location:location,
+      Joburl:joburl,
+      Driveurl:driveurl,
+      Note:notes
+    }
+
+
+    axios.post("http://localhost:8080/applicationfill",obj,{
+      headers: { Authorization: "Bearer " + localStorage.getItem("token")}
+    })
+    .then((res)=>{
+      const response = res.data;
+      if(response.data == "success"){
+        alert("Application Added Successfully");
+        form.reset();
+      }
+      else if(response.data == "fail"){
+        alert("Failed to add application,try again")
+      }
+    }).catch((err)=>{
+      alert("error is",err.message)
+    })
+
+  }
+
+  </script>
+</body>
+</html>

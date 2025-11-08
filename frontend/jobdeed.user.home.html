@@ -1,0 +1,393 @@
+<!-- home.html (left sidebar redesigned; JS untouched) -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Deed - Home</title>
+    <style>
+        /* ===== Base ===== */
+        * { box-sizing: border-box; }
+        body {
+            background-color: #f8faf9;
+            font-family: system-ui, Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            color: #0f1f1c;
+        }
+
+        /* ===== Sidebar ===== */
+        .sidebar {
+            width: 240px;
+            background: #ffffff;
+            border-right: 1px solid #e4efec;
+            height: 100vh;
+            position: fixed;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+        }
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 8px;
+            margin-bottom: 8px;
+        }
+        .brand-logo {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: #0f6a5a;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 700;
+        }
+        .brand-name {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: .3px;
+            color: #0c463d;
+        }
+
+        .sidebar hr {
+            border: 0;
+            border-top: 1px solid #e8f2ef;
+            margin: 10px 0 14px 0;
+        }
+
+        .group-label {
+            font-size: 12px;
+            letter-spacing: .6px;
+            text-transform: uppercase;
+            color: #5c6f6b;
+            margin: 10px 8px 6px;
+        }
+
+        .nav {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            overflow-y: auto;
+            padding-right: 2px; /* keeps scrollbar off the text */
+        }
+
+        .icon-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            padding: 10px 12px;
+            background-color: #f6f9f8;
+            border: 1px solid #e6efec;
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: left;
+            font-size: 15px;
+            color: #0f2b26;
+            transition: background-color .15s, border-color .15s, transform .02s;
+        }
+        .icon-btn:hover {
+            background-color: #eef6f4;
+            border-color: #d9e6e2;
+        }
+        .icon-btn:active {
+            transform: translateY(1px);
+        }
+        .icon {
+            width: 22px;
+            text-align: center;
+        }
+
+        /* Optional active look (kept simple; JS not changed) */
+        .icon-btn.active {
+            background: #e8f5f2;
+            border-color: #cfe5df;
+            color: #0f6a5a;
+            font-weight: 600;
+        }
+
+        /* Keep Logout at the bottom without JS */
+        .sidebar-footer {
+            margin-top: auto;
+            padding-top: 10px;
+        }
+
+        /* ===== Main content ===== */
+        .main-content {
+            margin-left: 240px;
+            padding: 20px;
+            width: calc(100% - 240px);
+        }
+        #dashboard { margin-bottom: 40px; }
+
+        #stats {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .stat-box {
+            background: #fff;
+            padding: 18px;
+            border: 1px solid #d9e5e1;
+            border-radius: 14px;
+            box-shadow: 0 6px 18px rgba(0,0,0,.06);
+            text-align: center;
+            width: 200px;
+        }
+
+        #search-form { margin-bottom: 20px; }
+        input, select {
+            padding: 8px;
+            margin-right: 10px;
+            border: 1px solid #d9e5e1;
+            border-radius: 6px;
+            outline: none;
+        }
+        input:focus, select:focus { border-color: #0f6a5a; }
+        button {
+            padding: 8px 16px;
+            background: #0f6a5a;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        table { width: 100%; border-collapse: collapse; background: #fff; }
+        th, td {
+            border: 1px solid #d9e5e1;
+            padding: 12px;
+            text-align: left;
+        }
+        th { background: #e6f3f0; }
+
+        .edit-btn, .delete-btn {
+            padding: 6px 10px;
+            margin-right: 5px;
+            border: none;
+            cursor: pointer;
+            border-radius: 6px;
+        }
+        .edit-btn { background: #0f6a5a; color: #fff; }
+        .delete-btn { background: #ff4422; color: #fff; }
+
+        /* Basic small-screen tweak without complex behavior */
+        @media (max-width: 800px) {
+            .sidebar { width: 200px; }
+            .main-content { margin-left: 200px; width: calc(100% - 200px); }
+        }
+    </style>
+</head>
+<body>
+   
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-logo">JD</div>
+            <div class="brand-name">Job Deed</div>
+        </div>
+
+        <hr>
+
+        <div class="group-label">Main</div>
+        <nav class="nav">
+            <button class="icon-btn" onclick="showSection('dashboard')">
+                <span class="icon">🏠</span> Dashboard
+            </button>
+            <button class="icon-btn" onclick="showSection('applications')">
+                <span class="icon">📋</span> Applications
+            </button>
+        </nav>
+
+        <div class="group-label">Manage</div>
+        <nav class="nav">
+            <button class="icon-btn" onclick="window.location.href='jobdeed.applicationfill.html'">
+                <span class="icon">➕</span> Add Application
+            </button>
+            <button class="icon-btn" onclick="window.location.href='companies.html'">
+                <span class="icon">🏢</span> Companies
+            </button>
+            <button class="icon-btn" onclick="window.location.href='savedjobs.html'">
+                <span class="icon">⭐</span> Saved Jobs
+            </button>
+            <button class="icon-btn" onclick="window.location.href='jobdeed.analysis.html'">
+                <span class="icon">📊</span> Analysis
+            </button>
+            <button class="icon-btn" onclick="window.location.href='profilemanagement.html'">
+                <span class="icon">⚙️</span> Profile
+            </button>
+            <button class="icon-btn" onclick="window.location.href='jobdeed.support.html'">
+                <span class="icon">❓</span> Support
+            </button>
+        </nav>
+
+        <div class="sidebar-footer">
+            <hr>
+            <button class="icon-btn" onclick="logout()">
+                <span class="icon">🚪</span> Logout
+            </button>
+        </div>
+    </aside>
+
+   
+    <div class="main-content">
+        <h1>Welcome to Job Deed</h1>
+
+        <div id="dashboard">
+            <h2>Dashboard</h2>
+            <div id="stats"></div>
+        </div>
+
+        <div id="applications" style="display:none;">
+            <h2>Applications</h2>
+            <form id="search-form" onsubmit="searchApplications(event)">
+                <input type="text" id="keyword" placeholder="Keyword (company/job)">
+                <select id="status">
+                    <option value="">All Status</option>
+                    <option value="Applied">Applied</option>
+                    <option value="Screening">Screening</option>
+                    <option value="Interviewing">Interviewing</option>
+                    <option value="Assignment">Assignment</option>
+                    <option value="Offered">Offered</option>
+                    <option value="Rejected">Rejected</option>
+                    <option value="Accepted">Accepted</option>
+                    <option value="On Hold">On Hold</option>
+                </select>
+                <input type="date" id="startDate">
+                <input type="date" id="endDate">
+                <button type="submit">Search</button>
+            </form>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Company</th>
+                        <th>Job Title</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Location</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="app-table"></tbody>
+            </table>
+        </div>
+    </div>
+
+   
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.6.8/dist/axios.min.js"></script>
+    <script>
+
+        if(!navigator.onLine){
+            document.body.innerHTML = "Please check your internet connection";
+
+        }
+        const token = localStorage.getItem("token");
+        if(!token){
+            window.location.href = "jobdeed.login.html";
+        }
+
+        function showSection(section){
+            document.getElementById('dashboard').style.display = section === 'dashboard' ? 'block' : 'none';
+            document.getElementById('applications').style.display = section === 'applications' ? 'block' : 'none';
+            if(section === 'dashboard') fetchStats();
+            if(section === 'applications') fetchApplications();
+        }
+
+        function logout(){
+            if(confirm("Are you sure to logout")){
+            localStorage.removeItem("token");
+            localStorage.removeItem("name");
+            localStorage.removeItem("Email");
+            alert("Logout successful");
+            window.location.href = "jobdeed.login.html";
+            }
+        }
+        function fetchStats(){
+    axios.get("http://localhost:8080/applications/stats", {
+        headers: { Authorization: `Bearer ${token}` }
+    }).then((res) => {
+        const statsDiv = document.getElementById("stats");
+        statsDiv.innerHTML = "";
+
+        const totalBox = document.createElement("div");
+        totalBox.className = "stat-box";
+        totalBox.innerHTML = `<h3>Total Applications</h3><p>${res.data.total}</p>`;
+        statsDiv.appendChild(totalBox);
+
+        res.data.byStatus.forEach(stat => {
+            const box = document.createElement("div");
+            box.className = "stat-box";
+            box.innerHTML = `<h3>${stat.ApplicationStatus}</h3><p>${stat.count}</p>`;
+            statsDiv.appendChild(box);
+        });
+    }).catch((err) => {
+        console.error(err);
+    });
+}
+
+
+        function fetchApplications(query = {}){
+            let url = "http://localhost:8080/applications";
+            if(Object.keys(query).length > 0){
+                url = "http://localhost:8080/applications/search?" + new URLSearchParams(query).toString();
+            }
+            axios.get(url, {
+                headers: { Authorization: `Bearer ${token}` }
+            }).then((res) => {
+                const tbody = document.getElementById("app-table");
+                tbody.innerHTML = "";
+                res.data.forEach(app => {
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `
+                        <td>${app.CompanyName}</td>
+                        <td>${app.JobTitle}</td>
+                        <td>${app.ApplicationDate.slice(0,10)}</td>
+                        <td>${app.ApplicationStatus}</td>
+                        <td>${app.JobLocation || ''}</td>
+                        <td>
+                            <button class="edit-btn" onclick="editApp(${app.id})">Edit</button>
+                            <button class="delete-btn" onclick="deleteApp(${app.id})">Delete</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }).catch((err) => {
+                console.log(err);
+            });
+        }
+
+        function searchApplications(event){
+            event.preventDefault();
+            const query = {
+                keyword: document.getElementById("keyword").value,
+                status: document.getElementById("status").value,
+                startDate: document.getElementById("startDate").value,
+                endDate: document.getElementById("endDate").value
+            };
+            fetchApplications(query);
+        }
+
+        function editApp(id){
+            alert("please delete the application and go to Add application to add");
+        }
+
+        function deleteApp(id){
+            if(confirm("Are you sure?")){
+                axios.delete(`http://localhost:8080/applications/${id}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                }).then(() => {
+                    alert("Deleted");
+                    fetchApplications();
+                }).catch((err) => {
+                    console.log(err);
+                });
+            }
+        }
+
+        // Load dashboard on start
+        showSection('dashboard');
+    </script>
+</body>
+</html>
