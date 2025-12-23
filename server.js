@@ -21,7 +21,7 @@ app.post("/mul", (req, res) => {
   const result = num1 * num2;
 
   res.json(
-    result
+    {result}
   );
 });
 
