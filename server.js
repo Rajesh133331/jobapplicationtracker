@@ -6,6 +6,9 @@ app.use(express.json());
 
 // POST API
 app.post("/mul", (req, res) => {
+
+  console.log(req.body,'venkataratnam');
+  
   const { num1, num2 } = req.body;
 
   // Validation
@@ -17,7 +20,7 @@ app.post("/mul", (req, res) => {
 
   const result = num1 * num2;
 
-  res.send(
+  res.json(
     result
   );
 });
